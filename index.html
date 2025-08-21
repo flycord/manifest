@@ -1,20 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manifest & Lua Generator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-bg: #000;
-            --gui-bg: #111;
-            --text-color: #fff;
-            --accent-color: #0ff;
-            --border-radius: 20px;
-            --transition: all 0.3s ease;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -23,506 +14,427 @@
         }
 
         body {
-            background-color: var(--primary-bg);
-            color: var(--text-color);
+            background-color: #0a0a0a;
+            color: #fff;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
             overflow-x: hidden;
         }
 
         .container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        .gui {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            background-color: var(--gui-bg);
-            border-radius: var(--border-radius);
-            padding: 2.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .gui::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            z-index: -1;
-            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
-            background-size: 400%;
-            border-radius: var(--border-radius);
-            animation: rgbBorder 20s linear infinite;
-            filter: blur(5px);
-            opacity: 0.7;
-            transition: var(--transition);
-        }
-
-        @keyframes rgbBorder {
-            0% {
-                background-position: 0 0;
-            }
-            50% {
-                background-position: 400% 0;
-            }
-            100% {
-                background-position: 0 0;
-            }
-        }
-
-        .title {
+        header {
             text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
-            background-size: 400%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: rgbText 8s linear infinite;
+            padding: 40px 0;
+            animation: fadeIn 1s ease-out;
         }
 
-        @keyframes rgbText {
-            0% {
-                background-position: 0 0;
-            }
-            50% {
-                background-position: 400% 0;
-            }
-            100% {
-                background-position: 0 0;
-            }
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff0080, #00ffff, #ff0080);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s linear infinite, glow 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 10px rgba(255, 0, 128, 0.5), 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            background: rgba(20, 20, 30, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 0 25px rgba(255, 0, 128, 0.3), 0 0 45px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.8s ease-out;
         }
 
         .input-group {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
         }
 
-        .input-field {
+        input {
             flex: 1;
-            position: relative;
-        }
-
-        .input-field input {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 50px;
+            padding: 15px 20px;
             border: none;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            font-size: 1rem;
-            transition: var(--transition);
-            padding-left: 1.5rem;
-        }
-
-        .input-field input:focus {
+            border-radius: 8px 0 0 8px;
+            background: rgba(10, 10, 15, 0.8);
+            color: #fff;
+            font-size: 16px;
             outline: none;
-            background-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            transition: all 0.3s;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        .input-field label {
-            position: absolute;
-            left: 1.5rem;
-            top: 1rem;
-            color: rgba(255, 255, 255, 0.7);
-            transition: var(--transition);
-            pointer-events: none;
+        input:focus {
+            box-shadow: 0 0 15px rgba(255, 0, 128, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        .input-field input:focus + label,
-        .input-field input:not(:placeholder-shown) + label {
-            top: -0.8rem;
-            left: 1rem;
-            font-size: 0.8rem;
-            background-color: var(--gui-bg);
-            padding: 0 0.5rem;
-            color: var(--accent-color);
-        }
-
-        .search-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #00ffd5, #002bff);
-            color: white;
+        button {
+            padding: 15px 25px;
             border: none;
+            border-radius: 0 8px 8px 0;
+            background: linear-gradient(90deg, #ff0080, #00ffff);
+            color: white;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(255, 0, 128, 0.5);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.7), 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .stats {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            gap: 20px;
+            animation: fadeIn 1.5s ease-out;
         }
 
-        .search-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        .stat-box {
+            background: rgba(20, 20, 30, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
         }
 
-        .search-btn i {
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.4), 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .stat-box h3 {
             font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #ff0080;
         }
 
-        .search-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
-
-        .search-btn:hover::before {
-            left: 100%;
+        .stat-box p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ffff;
         }
 
         .log-container {
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 1.5rem;
-            min-height: 100px;
+            background: rgba(20, 20, 30, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
             max-height: 300px;
             overflow-y: auto;
-            font-family: 'Courier New', Courier, monospace;
-            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 1s ease-out;
         }
 
-        .log-container::-webkit-scrollbar {
-            width: 8px;
+        .log-container h3 {
+            margin-bottom: 15px;
+            color: #ff0080;
+            text-align: center;
+            font-size: 1.5rem;
         }
 
-        .log-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .log-container::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 10px;
+        .log-content {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .log-entry {
-            margin-bottom: 0.5rem;
-            padding-left: 1rem;
-            border-left: 2px solid var(--accent-color);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            background: rgba(10, 10, 15, 0.6);
+            animation: fadeIn 0.5s ease-out;
         }
 
         .success {
-            color: #4caf50;
+            color: #00ffaa;
+            border-left: 4px solid #00ffaa;
         }
 
         .error {
-            color: #f44336;
+            color: #ff3860;
+            border-left: 4px solid #ff3860;
         }
 
         .info {
-            color: #2196f3;
+            color: #00bfff;
+            border-left: 4px solid #00bfff;
         }
 
-        .loading {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--accent-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        .warning {
+            color: #ffdd57;
+            border-left: 4px solid #ffdd57;
         }
 
         footer {
-            background-color: #111;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #aaa;
+            animation: fadeIn 2s ease-out;
         }
 
-        .footer-left {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .social-links {
+            margin-bottom: 15px;
         }
 
-        .footer-center {
-            display: flex;
-            gap: 1.5rem;
+        .social-links a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0 15px;
+            transition: all 0.3s;
+            display: inline-block;
         }
 
-        .footer-right {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
+        .social-links a:hover {
+            transform: translateY(-5px);
+            color: #ff0080;
+            text-shadow: 0 0 10px rgba(255, 0, 128, 0.7);
         }
 
-        .social-icon {
-            position: relative;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: var(--transition);
+        .developer {
+            font-size: 1.2rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
         }
 
-        .social-icon:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-3px);
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .social-icon::before {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            color: white;
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            white-space: nowrap;
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .social-icon:hover::before {
-            opacity: 1;
-            visibility: visible;
-            bottom: calc(100% + 5px);
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 0, 128, 0.5), 0 0 20px rgba(0, 255, 255, 0.5); }
+            to { text-shadow: 0 0 20px rgba(255, 0, 128, 0.8), 0 0 40px rgba(0, 255, 255, 0.8); }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .gui {
-                padding: 1.5rem;
+            h1 {
+                font-size: 2.5rem;
             }
             
-            .title {
-                font-size: 1.8rem;
-            }
-            
-            .input-group {
+            .stats {
                 flex-direction: column;
             }
             
-            .search-btn {
-                width: 100%;
-                height: 50px;
-                border-radius: 50px;
-            }
-            
-            footer {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .footer-center {
-                order: 3;
-                margin-top: 1rem;
+            .stat-box {
+                min-width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="gui">
-            <h1 class="title">Manifest & Lua Generator</h1>
-            
+        <header>
+            <h1>Manifest & Lua Generator</h1>
+            <p class="subtitle">Steam oyunları için manifest ve lua dosyalarını otomatik olarak oluşturun</p>
+        </header>
+
+        <div class="search-box">
             <div class="input-group">
-                <div class="input-field">
-                    <input type="text" id="gameId" placeholder=" " required>
-                    <label for="gameId">Steam Game ID</label>
-                </div>
-                <button class="search-btn" id="searchBtn">
-                    <i class="fas fa-search"></i>
-                </button>
+                <input type="text" id="gameId" placeholder="Steam Oyun ID'sini girin...">
+                <button onclick="searchGame()"><i class="fas fa-search"></i> Ara</button>
             </div>
-            
-            <div class="log-container" id="logContainer">
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <h3><i class="fas fa-gamepad"></i> Toplam Oyun</h3>
+                <p id="totalGames">Yükleniyor...</p>
+            </div>
+            <div class="stat-box">
+                <h3><i class="fas fa-sync-alt"></i> Son Güncelleme</h3>
+                <p id="lastUpdate">Yükleniyor...</p>
+            </div>
+        </div>
+
+        <div class="log-container">
+            <h3><i class="fas fa-terminal"></i> İşlem Logları</h3>
+            <div class="log-content" id="logContent">
+                <div class="log-entry info">Sistem hazır. Oyun ID'si girip arama yapabilirsiniz.</div>
             </div>
         </div>
     </div>
-    
+
     <footer>
-        <div class="footer-left">
-            <span>Created by Mentalite</span>
+        <div class="social-links">
+            <a href="https://www.instagram.com/mentalitexyz" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://discord.com/users/788686743427612673" target="_blank"><i class="fab fa-discord"></i></a>
         </div>
-        <div class="footer-center">
-            <a href="https://instagram.com/mentalitexyz" target="_blank" class="social-icon" data-tooltip="Instagram">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://discord.com/users/788686743427612673" target="_blank" class="social-icon" data-tooltip="Discord">
-                <i class="fab fa-discord"></i>
-            </a>
-        </div>
-        <div class="footer-right">
-            <span>Copyright Manifest Generator | 2025</span>
-        </div>
+        <div class="developer">Developed by Mentalite</div>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const gameIdInput = document.getElementById('gameId');
-            const searchBtn = document.getElementById('searchBtn');
-            const logContainer = document.getElementById('logContainer');
+            getGameCount();
+            getLastUpdate();
+        });
+
+        function addLog(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
             
-            setTimeout(() => {
-                gameIdInput.focus();
-            }, 500);
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('tr-TR');
             
-            function addLog(message, type = 'info') {
-                const logEntry = document.createElement('div');
-                logEntry.className = `log-entry ${type}`;
-                
-                if (type === 'info') {
-                    logEntry.innerHTML = `<span class="loading"></span>${message}`;
+            logEntry.innerHTML = `<strong>[${timeString}]</strong> ${message}`;
+            logContent.appendChild(logEntry);
+            
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        async function getGameCount() {
+            try {
+                addLog('Oyun sayısı alınıyor...', 'info');
+                const response = await fetch('https://raw.githubusercontent.com/SteamAutoCracks/ManifestHub/main/appaccesstokens.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    const gameCount = Object.keys(data).length;
+                    document.getElementById('totalGames').textContent = gameCount;
+                    addLog(`Oyun sayısı alındı: ${gameCount}`, 'success');
                 } else {
-                    logEntry.textContent = message;
+                    throw new Error('Oyun listesi alınamadı');
                 }
-                
-                logContainer.appendChild(logEntry);
-                logContainer.scrollTop = logContainer.scrollHeight;
-                
-                if (type !== 'info') {
-                    const loading = logEntry.querySelector('.loading');
-                    if (loading) {
-                        setTimeout(() => {
-                            loading.remove();
-                        }, 500);
-                    }
-                }
-                
-                return logEntry;
+            } catch (error) {
+                addLog(`Hata: ${error.message}`, 'error');
+                document.getElementById('totalGames').textContent = 'Hata';
             }
-            
-            function updateLog(logEntry, newMessage, newType) {
-                if (newType) {
-                    logEntry.className = `log-entry ${newType}`;
-                }
-                logEntry.innerHTML = newMessage;
-            }
-            
-            searchBtn.addEventListener('click', async function() {
-                const gameId = gameIdInput.value.trim();
-                
-                if (!gameId) {
-                    addLog('Please enter a Steam Game ID', 'error');
-                    gameIdInput.focus();
-                    return;
-                }
-                
-                logContainer.innerHTML = '';
-                
-                const searchingLog = addLog(`${gameId} Aranıyor...`, 'info');
-                
-                try {
-                    const response = await realApiCall(gameId);
-                    
-                    if (response.status === 'success') {
-                        updateLog(searchingLog, `${gameId} Bulundu. İndiriliyor...`, 'success');
+        }
+
+        async function getLastUpdate() {
+            try {
+                addLog('Son güncelleme bilgileri alınıyor...', 'info');
+                const response = await fetch('https://api.github.com/repos/SteamAutoCracks/ManifestHub/commits?path=appaccesstokens.json&per_page=1');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.length > 0) {
+                        const lastUpdate = new Date(data[0].commit.committer.date);
+                        const now = new Date();
+                        const diffTime = Math.abs(now - lastUpdate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
                         
-                        
-                        try {
-                            const downloadResponse = await fetch(`https://cysaw.org/d.php?token=${response.dirName}`, {
-                                method: 'GET',
-                                headers: {
-                                    'accept': '*/*',
-                                    'accept-language': 'en-US,en;q=0.9',
-                                    'referer': 'https://cysaw.org/'
-                                }
-                            });
-                            
-                            if (downloadResponse.ok) {
-                                updateLog(downloadLog, `Manifest successfully downloaded!`, 'success');
-                            } else {
-                                updateLog(downloadLog, `Download failed with status ${downloadResponse.status}`, 'error');
-                            }
-                        } catch (downloadError) {
-                            updateLog(downloadLog, `Download error: ${downloadError.message}`, 'error');
-                        }
+                        document.getElementById('lastUpdate').textContent = `${diffDays} gün önce`;
+                        addLog(`Son güncelleme: ${diffDays} gün önce`, 'success');
                     } else {
-                        updateLog(searchingLog, `${gameId} Bulunamadı.`, 'error');
-                        if (response.message) {
-                            addLog(`Hata: ${response.message}`, 'error');
-                        }
+                        throw new Error('Commit bilgisi bulunamadı');
                     }
-                } catch (error) {
-                    updateLog(searchingLog, `Error: ${error.message}`, 'error');
+                } else {
+                    throw new Error('Güncelleme bilgisi alınamadı');
                 }
-            });
+            } catch (error) {
+                addLog(`Hata: ${error.message}`, 'error');
+                document.getElementById('lastUpdate').textContent = 'Hata';
+            }
+        }
+
+        async function searchGame() {
+            const gameId = document.getElementById('gameId').value.trim();
             
-            async function realApiCall(gameId) {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const targetUrl = encodeURIComponent('https://cysaw.org/api.php');
-                    const response = await fetch(proxyUrl + targetUrl, {
-                    method: 'POST',
-                    headers: {
-                        'accept': '*/*',
-                        'accept-language': 'en-US,en;q=0.9',
-                        'priority': 'u=1, i',
-                        'referer': 'https://cysaw.org/',
-                        'sec-ch-ua': '"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
-                        'sec-ch-ua-mobile': '?0',
-                        'sec-ch-ua-platform': '"Windows"',
-                        'sec-fetch-dest': 'empty',
-                        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
-                        'cookie': 'PHPSESSID=0493567bed53909a1713ce6a363ffa2a'
-                    },
-                    body: JSON.stringify({ appId: gameId })
+            if (!gameId) {
+                addLog('Lütfen bir oyun IDsi girin!', 'warning');
+                return;
+            }
+            
+            addLog(`"${gameId}" ID'li oyun aranıyor...`, 'info');
+            
+            try {
+                const headers = {
+                    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                    'accept-language': 'en-US,en;q=0.9',
+                    'priority': 'u=0, i',
+                    'referer': 'https://paasifymarket.com/',
+                    'sec-ch-ua': '"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
+                    'sec-ch-ua-mobile': '?0',
+                    'sec-ch-ua-platform': '"Windows"',
+                    'sec-fetch-dest': 'document',
+                    'sec-fetch-mode': 'navigate',
+                    'sec-fetch-site': 'cross-site',
+                    'sec-fetch-user': '?1',
+                    'upgrade-insecure-requests': '1',
+                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
+                };
+                
+                const github_url = `https://codeload.github.com/SteamAutoCracks/ManifestHub/zip/refs/heads/${gameId}`;
+                
+                const response = await fetch(github_url, {
+                    method: 'HEAD',
+                    headers: headers
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`API request failed with status ${response.status}`);
+                if (response.status === 200) {
+                    addLog(`"${gameId}" ID'li oyun bulundu!`, 'success');
+                    addLog('Manifest dosyası indiriliyor...', 'info');
+                    
+                    const downloadResponse = await fetch(github_url, { headers: headers });
+                    const blob = await downloadResponse.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `${gameId}.zip`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    addLog('Manifest dosyası başarıyla indirildi!', 'success');
+                } else {
+                    addLog(`"${gameId}" ID'li oyun bulunamadı!`, 'error');
                 }
-                
-                return await response.json();
+            } catch (error) {
+                addLog(`Bir hata oluştu: ${error.message}`, 'error');
             }
-            
-            gameIdInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchBtn.click();
-                }
-            });
+        }
+
+        document.getElementById('gameId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchGame();
+            }
         });
     </script>
 </body>
