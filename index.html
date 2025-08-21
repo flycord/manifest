@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V I O C I T Y</title>
+    <title>V I O C I T Yr</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -51,7 +51,7 @@
             margin-bottom: 30px;
         }
 
-        .search-box {
+        .download-box {
             background: rgba(20, 20, 30, 0.8);
             border-radius: 15px;
             padding: 30px;
@@ -60,6 +60,7 @@
             box-shadow: 0 0 25px rgba(255, 0, 128, 0.3), 0 0 45px rgba(0, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: slideUp 0.8s ease-out;
+            text-align: center;
         }
 
         .input-group {
@@ -71,38 +72,49 @@
             flex: 1;
             padding: 15px 20px;
             border: none;
-            border-radius: 8px 0 0 8px;
+            border-radius: 8px;
             background: rgba(10, 10, 15, 0.8);
             color: #fff;
             font-size: 16px;
             outline: none;
             transition: all 0.3s;
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         input:focus {
             box-shadow: 0 0 15px rgba(255, 0, 128, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        button {
-            padding: 15px 25px;
+        .download-btn {
+            padding: 15px 30px;
             border: none;
-            border-radius: 0 8px 8px 0;
+            border-radius: 8px;
             background: linear-gradient(90deg, #ff0080, #00ffff);
             color: white;
             font-weight: bold;
+            font-size: 18px;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 0 15px rgba(255, 0, 128, 0.5);
+            width: 100%;
         }
 
-        button:hover {
+        .download-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 0 20px rgba(255, 0, 128, 0.7), 0 0 30px rgba(0, 255, 255, 0.5);
         }
 
-        button:active {
+        .download-btn:active {
             transform: translateY(0);
+        }
+
+        .download-btn:disabled {
+            background: linear-gradient(90deg, #666, #999);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .stats {
@@ -228,7 +240,6 @@
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
         }
 
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -250,7 +261,6 @@
             to { text-shadow: 0 0 20px rgba(255, 0, 128, 0.8), 0 0 40px rgba(0, 255, 255, 0.8); }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.5rem;
@@ -273,11 +283,11 @@
             <p class="subtitle">Steam Manifest & Lua Generator</p>
         </header>
 
-        <div class="search-box">
-            <div class="input-group">
-                <input type="text" id="gameId" placeholder="Steam Oyun ID'sini girin...">
-                <button onclick="searchGame()"><i class="fas fa-search"></i> Ara</button>
-            </div>
+        <div class="download-box">
+            <input type="text" id="gameId" placeholder="Steam Oyun ID'sini girin...">
+            <button class="download-btn" onclick="downloadGame()">
+                <i class="fas fa-download"></i> Download
+            </button>
         </div>
 
         <div class="stats">
@@ -294,7 +304,7 @@
         <div class="log-container">
             <h3><i class="fas fa-terminal"></i> İşlem Logları</h3>
             <div class="log-content" id="logContent">
-                <div class="log-entry info">Sistem hazır. Oyun ID'si girip arama yapabilirsiniz.</div>
+                <div class="log-entry info">Sistem hazır. Oyun ID'si girip indirme yapabilirsiniz.</div>
             </div>
         </div>
     </div>
@@ -371,69 +381,53 @@
             }
         }
 
-        async function searchGame() {
+        async function downloadGame() {
             const gameId = document.getElementById('gameId').value.trim();
+            const downloadBtn = document.querySelector('.download-btn');
             
             if (!gameId) {
                 addLog('Lütfen bir oyun IDsi girin!', 'warning');
                 return;
             }
             
-            addLog(`"${gameId}" ID'li oyun aranıyor...`, 'info');
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İndiriliyor...';
+            
+            addLog(`"${gameId}" ID'li oyun indiriliyor...`, 'info');
             
             try {
-                const headers = {
-                    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-                    'accept-language': 'en-US,en;q=0.9',
-                    'priority': 'u=0, i',
-                    'referer': 'https://paasifymarket.com/',
-                    'sec-ch-ua': '"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
-                    'sec-ch-ua-mobile': '?0',
-                    'sec-ch-ua-platform': '"Windows"',
-                    'sec-fetch-dest': 'document',
-                    'sec-fetch-mode': 'navigate',
-                    'sec-fetch-site': 'cross-site',
-                    'sec-fetch-user': '?1',
-                    'upgrade-insecure-requests': '1',
-                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
-                };
+                const githubUrl = `https://codeload.github.com/SteamAutoCracks/ManifestHub/zip/refs/heads/${gameId}`;
                 
-                const github_url = `https://codeload.github.com/SteamAutoCracks/ManifestHub/zip/refs/heads/${gameId}`;
+                const response = await fetch(githubUrl);
                 
-                const response = await fetch(github_url, {
-                    method: 'HEAD',
-                    headers: headers
-                });
-                
-                if (response.status === 200) {
-                    addLog(`"${gameId}" ID'li oyun bulundu!`, 'success');
-                    addLog('Manifest dosyası indiriliyor...', 'info');
+                if (response.ok) {
+                    const blob = await response.blob();
                     
-                    const downloadResponse = await fetch(github_url, { headers: headers });
-                    const blob = await downloadResponse.blob();
                     const url = window.URL.createObjectURL(blob);
-                    
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = `${gameId}.zip`;
+                    a.download = `${gameId}_manifest.zip`;
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
                     
-                    addLog('Manifest dosyası başarıyla indirildi!', 'success');
+                    addLog(`"${gameId}" ID'li oyun manifesti başarıyla indirildi!`, 'success');
                 } else {
                     addLog(`"${gameId}" ID'li oyun bulunamadı!`, 'error');
                 }
             } catch (error) {
-                addLog(`Bir hata oluştu: ${error.message}`, 'error');
+                addLog(`İndirme hatası: ${error.message}`, 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
             }
         }
 
         document.getElementById('gameId').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                searchGame();
+                downloadGame();
             }
         });
     </script>
